@@ -1,7 +1,6 @@
 package com.example.stackoverflowquestion.ui
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
@@ -9,17 +8,13 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.example.stackoverflowquestion.R
+import com.example.stackoverflowquestion.extention.hasNetwork
 import com.example.stackoverflowquestion.extention.toast
 import com.example.stackoverflowquestion.model.Item
-import com.example.stackoverflowquestion.repository.QuestionRepo
 import com.example.stackoverflowquestion.ui.adapter.AnswersAdapter
 import com.example.stackoverflowquestion.ui.viewModel.AnswerViewModel
-import com.example.stackoverflowquestion.ui.viewModel.QuestionViewModel
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_question_details.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class QuestionDetails : AppCompatActivity() {
 
@@ -33,7 +28,7 @@ class QuestionDetails : AppCompatActivity() {
         val intent = this.getIntent()
 
 
-        val id = intent.getIntExtra("id",0)
+        val id = intent.getIntExtra("id", 0)
         val Name = intent.getStringExtra("name")
         val Title = intent.getStringExtra("title")
         val image = intent.getStringExtra("image")
@@ -45,8 +40,25 @@ class QuestionDetails : AppCompatActivity() {
         initiateRecyclerview()
 
 
-        Log.d("id",id.toString())
-        fecthData(id)
+
+
+        if (hasNetwork()) {
+
+            fecthData(id)
+
+        }
+
+        else
+        {
+
+            val snackbar: Snackbar = Snackbar.make(
+                findViewById(android.R.id.content),
+                " no internet connection",
+                Snackbar.LENGTH_LONG
+            )
+            snackbar.show()
+
+        }
     }
 
 
@@ -66,28 +78,25 @@ class QuestionDetails : AppCompatActivity() {
         answerViewModel.getAnswers(id)
         answerViewModel.answers.observe(this, Observer {
 
-                    answerprogress.visibility = View.INVISIBLE
-                    if (it.isNullOrEmpty()) {
+            answerprogress.visibility = View.INVISIBLE
+            if (it.isNullOrEmpty()) {
 
 
-                        message.text = "No answers Found"
-                    } else {
+                message.text = "No answers Found"
+            } else {
 
-                        adapter = AnswersAdapter(
-                            this@QuestionDetails,
-                            it as ArrayList<Item>
-                        )
+                adapter = AnswersAdapter(
+                    this@QuestionDetails,
+                    it as ArrayList<Item>
+                )
 
-                        answerrecyclerView.adapter = adapter
-                        adapter.notifyDataSetChanged()
+                answerrecyclerView.adapter = adapter
+                adapter.notifyDataSetChanged()
 
-                    }
-
-
+            }
 
 
-
-                })
+        })
 
 
 

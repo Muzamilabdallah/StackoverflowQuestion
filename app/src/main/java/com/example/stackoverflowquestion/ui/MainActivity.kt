@@ -8,11 +8,13 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.stackoverflowquestion.R
+import com.example.stackoverflowquestion.extention.hasNetwork
 import com.example.stackoverflowquestion.extention.toast
 import com.example.stackoverflowquestion.model.Item
 import com.example.stackoverflowquestion.repository.QuestionRepo
 import com.example.stackoverflowquestion.ui.adapter.QuestionAdapter
 import com.example.stackoverflowquestion.ui.viewModel.QuestionViewModel
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_main3.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -32,8 +34,25 @@ questionViewModel=ViewModelProvider(this).get(QuestionViewModel::class.java)
 
         initiateRecyclerview()
 
+        if (hasNetwork()) {
 
-        fecthData()
+            fecthData()
+
+        }
+
+        else
+        {
+
+            val snackbar: Snackbar = Snackbar.make(
+                findViewById(android.R.id.content),
+                " no internet connection",
+                Snackbar.LENGTH_LONG
+            )
+            snackbar.show()
+
+        }
+
+
     }
 
 
